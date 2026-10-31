@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stadtgeist Basel</title>
+<link rel="stylesheet" href="/vendor/maplibre-gl.css">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/halloween.css" id="halloweenCss">
+</head>
+<body>
+<div id="map"></div>
+
+<header class="topbar">
+  <div class="brand"><span class="logo">🎃</span> Stadtgeist <span class="sub">Halloween Night Rally · Basel's agent-native layer</span></div>
+  <div class="stats">
+    <span>🎁 <b id="statBiz">0</b> storefronts</span>
+    <span>⚡ <b id="statQueries">0</b> agent calls</span>
+    <span>🏆 <b id="statBookings">0</b> bookings</span>
+    <span id="modeBadge" class="badge">…</span>
+    <a class="link" href="/owner.html" target="_blank">Owner console ↗</a>
+    <button id="themeBtn" class="themeBtn" title="Switch look">🎃</button>
+  </div>
+</header>
+
+<aside class="panel left">
+  <h2>🎃 Tell your agent about your night</h2>
+  <textarea id="wish" rows="3">Halloween in Basel! I arrive at SBB at 10:00 with my partner and our dog. Budget CHF 450. We love art and the Rhine, want a spooky dinner by the Rhine, and a box of Läckerli to take home.</textarea>
+  <div class="chips">
+    <button data-wish="Halloween in Basel! I arrive at SBB at 10:00 with my partner and our dog. Budget CHF 450. We love art and the Rhine, want a spooky dinner by the Rhine, and a box of Läckerli to take home.">🎃 Halloween + dog</button>
+    <button data-wish="Solo trip, arriving at 11:30 at Badischer Bahnhof, CHF 600, vegan food, specialty coffee and contemporary art, no dog.">🌱 Solo vegan</button>
+    <button data-wish="We are 2 people landing at the airport at 09:00, quiet day, brunch, art, Italian dinner, budget CHF 500.">✈️ Airport, quiet</button>
+  </div>
+  <div class="row">
+    <button id="run" class="primary">Race my day!</button>
+    <label class="toggle" title="Let the language model (local Qwen or Claude) read the wish and drive the tools"><input type="checkbox" id="useLlm" checked> LLM</label>
+  </div>
+  <div class="steps" id="steps">
+    <div data-s="find"><i>🔍</i><b>Find</b><small>storefronts</small></div>
+    <div data-s="check"><i>🛡</i><b>Check</b><small>signatures</small></div>
+    <div data-s="sim"><i>🔮</i><b>Simulate</b><small>your day</small></div>
+    <div data-s="book"><i>🏁</i><b>Book</b><small>all at once</small></div>
+    <div data-s="pay"><i>💳</i><b>Pay</b><small>only what you OK'd</small></div>
+  </div>
+  <p class="realnote">📍 Real Basel places from public web data. Availability, bookings and payments are simulated.</p>
+  <details class="log"><summary>Agent log <span class="muted" id="traceCount"></span></summary><ol id="trace"></ol></details>
+</aside>
+
+<aside class="panel right" id="planPanel" hidden>
+  <div class="planHead">
+    <h2 id="planTitle">Your day</h2>
+    <div class="kpis" id="kpis"></div>
+    <div class="podium" id="podium"></div>
+  </div>
+  <div id="summary" class="summary" hidden></div>
+  <ol id="timeline"></ol>
+  <div id="alts"></div>
+  <div class="row wrap">
+    <button id="rehearse" class="primary" disabled>▶ Drive the day</button>
+    <button id="misuse" disabled title="Replay the visitor's payment mandate at a shop they never approved">Try to misuse the mandate</button>
+  </div>
+  <div id="receipts"></div>
+</aside>
+
+<div class="dock">
+  <div class="clock"><span id="clock">--:--</span></div>
+  <input type="range" id="scrub" min="480" max="1380" value="600" step="1">
+  <button id="swarm">👻 Summon 60 visitors' agents</button>
+  <div id="forecast" class="forecast" hidden></div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<div id="status" class="status" hidden></div>
+
+<script src="/vendor/maplibre-gl.js"></script>
+<script src="/app.js" type="module"></script>
+</body>
+</html>

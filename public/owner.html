@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stadtgeist Owner Console</title>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/halloween.css" id="halloweenCss">
+<style>
+  html, body { overflow: auto; height: auto; min-height: 100%; }
+  input[type=number] { font: inherit; color: var(--text); background: rgba(0,0,0,.3); border: 1px solid var(--line); border-radius: 6px; padding: 3px 6px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
+  .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  select { font: inherit; color: var(--text); background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; }
+  select option { background: #0f172a; }
+  .grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 14px; margin-top: 14px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+  .card h2 { font-size: 15px; margin: 0 0 4px; }
+  .card p.hint { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+  .say { display: flex; gap: 8px; }
+  .say input { flex: 1; font: inherit; color: var(--text); background: rgba(0,0,0,.3); border: 1px solid var(--line); border-radius: 8px; padding: 9px; }
+  .reply { margin-top: 8px; font-size: 13px; color: #ccfbf1; }
+  .claims .c { display: flex; justify-content: space-between; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .tag { font-size: 11px; padding: 1px 7px; border-radius: 99px; white-space: nowrap; }
+  .tag.sig { background: rgba(94,234,212,.12); color: #99f6e4; }
+  .tag.att { background: rgba(251,191,36,.12); color: #fde68a; }
+  .kv { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .kv div { background: rgba(255,255,255,.04); border-radius: 8px; padding: 8px; text-align: center; }
+  .kv b { display: block; font-size: 20px; }
+  .kv span { font-size: 11px; color: var(--muted); }
+  .slots { display: flex; flex-wrap: wrap; gap: 6px; }
+  .slot { font-size: 12px; padding: 5px 8px; border-radius: 8px; border: 1px solid var(--line); cursor: pointer; background: rgba(255,255,255,.03); }
+  .slot.out { background: rgba(251,113,133,.15); border-color: var(--warn); text-decoration: line-through; }
+  .policy label { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .bars { display: flex; align-items: flex-end; gap: 4px; height: 110px; margin-top: 8px; }
+  .bars div { flex: 1; background: var(--gold); border-radius: 3px 3px 0 0; position: relative; min-height: 2px; }
+  .bars div span { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; color: var(--muted); }
+  .feed { list-style: none; padding: 0; margin: 0; font-size: 12.5px; max-height: 220px; overflow: auto; }
+  .feed li { padding: 5px 0; border-bottom: 1px solid var(--line); }
+  pre { font-size: 11px; background: rgba(0,0,0,.35); border-radius: 8px; padding: 8px; max-height: 260px; overflow: auto; color: #b8c4e6; }
+  .full { grid-column: 1 / -1; }
+  /* Rhine Rally skin */
+  .card { border: 4px solid var(--line); border-radius: 20px; box-shadow: 0 7px 0 var(--line); }
+  .card h2 { font: 400 20px var(--display); }
+  .card h3 { font: 400 15px var(--display); color: var(--purple); margin: 14px 0 6px; }
+  select, .say input { background: #fff; border: 3px solid var(--line); border-radius: 12px; font-weight: 800; }
+  select option { background: #fff; }
+  .kv div { background: var(--blue); color: #fff; border: 3px solid var(--line); box-shadow: 0 3px 0 var(--line); }
+  .kv div:nth-child(2) { background: var(--purple); } .kv div:nth-child(3) { background: var(--green); }
+  .kv b { font: 400 24px var(--display); } .kv span { color: #fff; font-weight: 900; text-transform: uppercase; }
+  .tag.sig { background: #e6f7ff; color: var(--ink); border: 2px solid var(--blue); }
+  .tag.att { background: #fff6cf; color: var(--ink); border: 2px solid #d4a800; }
+  .claims .c, .policy label, .feed li { border-bottom: 2px dashed #d8d1ea; }
+  .slot { background: #fff; border: 3px solid var(--line); font-weight: 800; box-shadow: 0 3px 0 var(--line); }
+  .slot.out { background: #ffd9d9; }
+  .bars div { background: linear-gradient(180deg, var(--yellow), var(--orange)); border: 2px solid var(--line); }
+  .reply { color: var(--green); font-weight: 900; }
+  body.halloween pre { background: #0d0618; color: #ffb21a; border-radius: 12px; }
+  body.halloween .card { background: #2a1746; } body.halloween select, body.halloween .say input, body.halloween .slot, body.halloween input[type=number] { background: #1b1033; color: var(--ink); } body.halloween select option { background: #1b1033; }
+  body.halloween .slot.out { background: #3a1010; } body.halloween .tag.sig, body.halloween .tag.att { color: var(--ink); background: #1b1033; }
+  body.halloween .kv div, body.halloween .kv span { color: #1b0f05; } body.halloween .kv div { background: #ffb21a; } body.halloween .kv div:nth-child(2) { background: #b26bff; } body.halloween .kv div:nth-child(3) { background: #7cff4f; }
+  pre { background: #1d1440; color: #ffd84a; border-radius: 12px; }
+  .wrap { padding-top: 22px; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand"><span class="logo" id="logo">★</span> Stadtgeist <span class="sub">Pit crew · Owner console</span></div>
+    <div class="row"><select id="pick"></select> <a class="link" id="human" target="_blank">Human page ↗</a> <a class="link" href="/" target="_blank">City twin ↗</a></div>
+  </div>
+
+  <div class="grid">
+    <div class="card full">
+      <h2>Tell your storefront what changed</h2>
+      <p class="hint">Plain words. It becomes a structured update, signed with your key, live for every agent within a second.</p>
+      <div class="say"><input id="say" placeholder="e.g. We're full at 19:00 tonight, and today there's a vegan pumpkin soup"><button class="primary" id="sayBtn">Publish</button></div>
+      <div class="chips" id="examples"></div>
+      <div class="reply" id="reply"></div>
+    </div>
+
+    <div class="card">
+      <h2 id="bizName">…</h2>
+      <p class="hint" id="bizTag"></p>
+      <div class="kv"><div><b id="kQ">0</b><span>agent calls</span></div><div><b id="kH">0</b><span>holds</span></div><div><b id="kB">0</b><span>bookings</span></div></div>
+      <h3>What agents believe about you</h3>
+      <div class="claims" id="claims"></div>
+      <h3>Live agent visits</h3>
+      <ul class="feed" id="feed"><li class="muted">Waiting for agents…</li></ul>
+    </div>
+
+    <div class="card">
+      <h2>Today's availability</h2>
+      <p class="hint">Tap a slot to mark it full for agents. Walk-ins and phone bookings stay with you.</p>
+      <div class="slots" id="slots"></div>
+      <div class="row"><button id="pause">Pause agent bookings</button></div>
+      <h3>What agents may do here</h3>
+      <div class="policy" id="policy"></div>
+      <h3>Tomorrow's demand forecast</h3>
+      <p class="hint" id="fcHint">Run "Simulate 60 visitors' agents" in the city twin to see who is planning to come.</p>
+      <div class="bars" id="bars"></div>
+    </div>
+
+    <div class="card full">
+      <h2>Your record, as agents receive it</h2>
+      <p class="hint">One signed object feeds your MCP storefront and your human page. Nothing is maintained twice.</p>
+      <pre id="raw"></pre>
+    </div>
+  </div>
+</div>
+<script src="/owner.js" type="module"></script>
+</body>
+</html>
